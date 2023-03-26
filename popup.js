@@ -1,21 +1,37 @@
+document.addEventListener("DOMContentLoaded", loadResults);
+
+
 function updateTyposList(lintResult) {
   const typoList = document.getElementById("typoList");
   typoList.innerHTML = "";
 
-  // JSON形式でlintResultを表示
-  const li = document.createElement("li");
-  li.textContent = JSON.stringify(lintResult, null, 2);
-  typoList.appendChild(li);
+  lintResult.messages.forEach((typo) => {
+    const li = document.createElement("li");
+
+    // フォーマットに従ってテキストを作成
+    let typoText = `${typo.from.line}行目${typo.from.ch}文字目\n※${typo.message}`;
+    if (typo.operation === "delete") {
+      typoText += `\n「${typo.before}」を「」に`;
+    } else if (typo.operation === "replace") {
+      typoText += `\n「${typo.before}」を「${typo.after}」に`;
+    }
+    li.textContent = typoText;
+    typoList.appendChild(li);
+  });
+  saveResults(document.getElementById("statusText").textContent, document.getElementById("sentText").textContent, lintResult);
 }
+
 
 function updateStatus(status) {
   document.getElementById("statusText").textContent = status;
+  saveResults(status, document.getElementById("sentText").textContent, null);
 }
 
 function updateSentText(text) {
   document.getElementById("sentTextTitle").style.display = "block";
   document.getElementById("sentText").style.display = "block";
   document.getElementById("sentText").textContent = text;
+  saveResults(document.getElementById("statusText").textContent, text, null);
 }
 
 document.getElementById("execute").addEventListener("click", () => {
@@ -33,3 +49,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     updateTyposList(request.typos);
   }
 });
+
+function saveResults(status, sentText, typos) {
+  const dataToSave = { status, sentText };
+  if (typos !== null) {
+    dataToSave.typos = typos;
+  }
+  chrome.storage.local.set(dataToSave);
+}
+
+function loadResults() {
+  chrome.storage.local.get(["status", "sentText", "typos"], (result) => {
+    if (result.status) {
+      updateStatus(result.status);
+    }
+    if (result.sentText) {
+      updateSentText(result.sentText);
+    }
+    if (result.typos) {
+      updateTyposList(result.typos);
+    }
+  });
+}
+
