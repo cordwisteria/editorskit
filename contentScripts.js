@@ -1,4 +1,10 @@
-import { apiUrl, apiKey } from "./credentials.js";
+async function getCredentials() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(["apiUrl", "apiKey"], (result) => {
+      resolve(result);
+    });
+  });
+}
 
 async function fetchShodoAPI(request) {
   return new Promise((resolve, reject) => {
@@ -13,6 +19,7 @@ async function fetchShodoAPI(request) {
 }
 
 async function getLintId(text) {
+  const { apiUrl, apiKey } = await getCredentials();
   const response = await fetchShodoAPI({
     action: "fetchShodoAPI",
     url: apiUrl,
@@ -29,6 +36,7 @@ async function getLintId(text) {
 
 
 async function fetchLintResult(lintId) {
+  const { apiUrl, apiKey } = await getCredentials();
   const apiUrlWithLintId = `${apiUrl}${lintId}/`;
 
   const response = await fetchShodoAPI({

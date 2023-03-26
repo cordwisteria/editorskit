@@ -24,8 +24,9 @@
   "content_scripts": [
     {
       "matches": ["*://*/*"],
-      "js": ["credentials.js", "contentScripts.js"]
+      "js": ["contentScripts.js"]
     }
   ],
+  "options_page": "options.html",
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://api.shodo.ink; object-src 'self'; connect-src 'self' https://api.shodo.ink"
 }
