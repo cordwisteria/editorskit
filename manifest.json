@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+  "name": "Japanese Typo Detector",
+  "version": "1.0",
+  "description": "Detects Japanese typos in web articles",
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "browser_action": {
+    "default_icon": "icon48.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["credentials.js", "contentScripts.js"]
+    }
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://api.shodo.ink; object-src 'self'; connect-src 'self' https://api.shodo.ink"
+}

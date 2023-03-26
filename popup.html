@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+    body {
+        width: 400px;
+    }
+    mark {
+      background-color: yellow;
+    }
+    </style>
+</head>
+<body>
+    <h1>ギズモード誤字脱字警察</h1>
+    <p>Detected Issues: <span id="issuesCount">0</span></p>
+    <button id="execute">校正</button>
+    <p id="status">Status: <span id="statusText">Idle</span></p>
+    <p id="sentTextTitle" style="display: none;">検証した文章:</p>
+    <textarea id="sentText" rows="10" cols="50" readonly style="display: none;"></textarea>
+    <h2>修正案:</h2>
+    <ul id="typoList"></ul>
+    <script src="popup.js"></script>
+</body>
+</html>
