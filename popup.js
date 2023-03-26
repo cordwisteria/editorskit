@@ -1,18 +1,11 @@
-function updateTyposList(typos) {
+function updateTyposList(lintResult) {
   const typoList = document.getElementById("typoList");
   typoList.innerHTML = "";
 
-  if (typos.length === 0) {
-    const li = document.createElement("li");
-    li.textContent = "No typos detected";
-    typoList.appendChild(li);
-  } else {
-    typos.forEach((typo) => {
-      const li = document.createElement("li");
-      li.textContent = `Line ${typo.line}: ${typo.before} => ${typo.after}`;
-      typoList.appendChild(li);
-    });
-  }
+  // JSON形式でlintResultを表示
+  const li = document.createElement("li");
+  li.textContent = JSON.stringify(lintResult, null, 2);
+  typoList.appendChild(li);
 }
 
 function updateStatus(status) {

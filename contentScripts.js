@@ -63,11 +63,8 @@ async function detectTypos(text) {
   }
 
   if (lintResult.status === "done") {
-    return lintResult.messages.map(msg => ({
-      line: msg.from.line,
-      before: msg.before,
-      after: msg.after
-    }));
+    // 生のJSONデータを返すように変更
+    return lintResult;
   } else {
     throw new Error("Failed to get lint result");
   }
@@ -85,15 +82,18 @@ function updatePopupSentText(text) {
   chrome.runtime.sendMessage({ action: "updateSentText", text: text });
 }
 
-async function processArticle() {
-  const article = document.querySelector("span[data-text='true']");
-  if (article) {
+async function processArticles() {
+  const articles = document.querySelectorAll("p");
+  if (articles.length > 0) {
     updatePopupStatus("Processing...");
-    const originalText = article.textContent;
-    updatePopupSentText(originalText);
+
+    // 全ての記事のテキストを結合
+    const combinedText = Array.from(articles).map(article => article.outerText).join("\n");
+
+    updatePopupSentText(combinedText);
     try {
       updatePopupStatus("DetectingTypos...");
-      const detectedTypos = await detectTypos(originalText);
+      const detectedTypos = await detectTypos(combinedText);
       sendTyposToPopup(detectedTypos);
       updatePopupStatus("Done");
     } catch (error) {
@@ -106,6 +106,6 @@ async function processArticle() {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "processArticle") {
-    processArticle();
+    processArticles();
   }
 });
